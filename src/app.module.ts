@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+import { DbModule } from './db/db.module';
 
 import configuration from './config/configuration';
 
@@ -10,6 +12,8 @@ import configuration from './config/configuration';
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    UserModule,
+    DbModule,
   ],
   controllers: [AppController],
   providers: [AppService],
