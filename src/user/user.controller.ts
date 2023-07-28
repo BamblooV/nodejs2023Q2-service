@@ -8,11 +8,15 @@ import {
   ParseUUIDPipe,
   Put,
   HttpCode,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
+import DBNotFound from '../common/errors/DBNotFound';
+import ForbiddenOperation from '../common/errors/ForbiddenOperations';
 
 @Controller('user')
 export class UserController {
@@ -30,7 +34,16 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.userService.findOne(id);
+    try {
+      return this.userService.findOne(id);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+      if (error instanceof ForbiddenOperation) {
+        throw new ForbiddenException();
+      }
+    }
   }
 
   @Put(':id')
@@ -38,12 +51,30 @@ export class UserController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateUserDto);
+    try {
+      return this.userService.update(id, updateUserDto);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+      if (error instanceof ForbiddenOperation) {
+        throw new ForbiddenException();
+      }
+    }
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.userService.remove(id);
+    try {
+      return this.userService.remove(id);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+      if (error instanceof ForbiddenOperation) {
+        throw new ForbiddenException();
+      }
+    }
   }
 }
