@@ -740,7 +740,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Artist was not found.
-  /fav:
+  /favs:
     get:
       tags:
         - Favorites
@@ -755,7 +755,7 @@ paths:
                 $ref: '#/components/schemas/Favorites'
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /fav/track/{id}:
+  /favs/track/{id}:
     parameters:
       - name: id
         in: path
@@ -791,7 +791,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track was not found.
-  /fav/album/{id}:
+  /favs/album/{id}:
     parameters:
       - name: id
         in: path
@@ -827,7 +827,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album was not found.
-  /fav/artist/{id}:
+  /favs/artist/{id}:
     parameters:
       - name: id
         in: path
