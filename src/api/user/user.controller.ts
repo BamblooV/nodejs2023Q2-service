@@ -10,19 +10,23 @@ import {
   HttpCode,
   NotFoundException,
   ForbiddenException,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
+import { UserEntity } from './entity/user.entity';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): UserEntity {
     return this.userService.create(createUserDto);
   }
 
@@ -32,7 +36,9 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  findOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): UserEntity {
     try {
       return this.userService.findOne(id);
     } catch (error) {
@@ -49,7 +55,7 @@ export class UserController {
   update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
+  ): UserEntity {
     try {
       return this.userService.update(id, updateUserDto);
     } catch (error) {

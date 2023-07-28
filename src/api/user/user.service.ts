@@ -2,51 +2,45 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './interface/user.interface';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
-import secureUser from '../../common/utils/secureUser';
 import { DbService } from '../../db/db.service';
+import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private db: DbService) {}
-  create(createUserDto: CreateUserDto) {
+
+  create(createUserDto: CreateUserDto): UserEntity {
     const id = uuidv4();
     const date = Date.now();
-    const user: User = {
+    const user: UserEntity = new UserEntity({
       id,
       ...createUserDto,
       version: 1,
       createdAt: date,
       updatedAt: date,
-    };
+    });
     this.db.users.push(user);
 
-    return secureUser(user);
+    return user;
   }
 
-  findAll() {
-    return this.db.users.map((user) => {
-      return secureUser(user);
-    });
+  findAll(): UserEntity[] {
+    return this.db.users;
   }
 
-  findOne(id: string) {
+  findOne(id: string): UserEntity {
     const user = this.db.users.find((user) => user.id === id);
 
     if (!user) {
       throw new DBNotFound();
     }
 
-    return secureUser(user);
+    return user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const user = this.db.users.find((user) => user.id === id);
-
-    if (!user) {
-      throw new DBNotFound();
-    }
+  update(id: string, updateUserDto: UpdateUserDto): UserEntity {
+    const user = this.findOne(id);
 
     if (user.password !== updateUserDto.oldPassword) {
       throw new ForbiddenOperation();
@@ -56,7 +50,7 @@ export class UserService {
     user.updatedAt = Date.now();
     user.version += 1;
 
-    return secureUser(user);
+    return user;
   }
 
   remove(id: string) {

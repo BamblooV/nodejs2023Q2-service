@@ -1,4 +1,4 @@
-import { User } from '../../user/interface/user.interface';
+import { User } from '../../api/user/interface/user.interface';
 
 export default (user: User) => {
   const secureUser = { ...user };
