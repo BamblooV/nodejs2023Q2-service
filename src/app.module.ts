@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { DbModule } from './db/db.module';
 import { TrackModule } from './track/track.module';
 import { ArtistModule } from './artist/artist.module';
+import { AlbumModule } from './album/album.module';
 
 import configuration from './config/configuration';
 
@@ -18,6 +19,7 @@ import configuration from './config/configuration';
     DbModule,
     TrackModule,
     ArtistModule,
+    AlbumModule,
   ],
   controllers: [AppController],
   providers: [AppService],
