@@ -1,2 +1,2 @@
-export * from './ForbiddenOperations';
-export * from './DBNotFound';
+export { ForbiddenOperation } from './ForbiddenOperation';
+export { DBNotFound } from './DBNotFound';

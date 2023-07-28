@@ -14,7 +14,7 @@ import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
-import DBNotFound from 'src/common/errors/DBNotFound';
+import { DBNotFound } from '../common/errors';
 
 @Controller('track')
 export class TrackController {

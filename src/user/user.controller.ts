@@ -15,8 +15,8 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
-import DBNotFound from '../common/errors/DBNotFound';
-import ForbiddenOperation from '../common/errors/ForbiddenOperations';
+import { DBNotFound } from '../common/errors/';
+import { ForbiddenOperation } from '../common/errors/';
 
 @Controller('user')
 export class UserController {

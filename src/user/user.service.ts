@@ -5,8 +5,8 @@ import { DbService } from '../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './interface/user.interface';
 import secureUser from '../common/utils/secureUser';
-import DBNotFound from '../common/errors/DBNotFound';
-import ForbiddenOperation from '../common/errors/ForbiddenOperations';
+import { DBNotFound } from '../common/errors/';
+import { ForbiddenOperation } from '../common/errors/';
 
 @Injectable()
 export class UserService {

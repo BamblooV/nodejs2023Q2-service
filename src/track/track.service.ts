@@ -3,7 +3,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { DbService } from '../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
-import DBNotFound from 'src/common/errors/DBNotFound';
+import { DBNotFound } from '../common/errors/';
 
 @Injectable()
 export class TrackService {
