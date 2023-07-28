@@ -40,6 +40,10 @@ export class TrackService {
   remove(id: string) {
     this.findOne(id);
 
+    this.db.favs.tracks = this.db.favs.tracks.filter(
+      (storedId) => storedId !== id,
+    );
+
     this.db.tracks = this.db.tracks.filter((u) => u.id !== id);
   }
 }

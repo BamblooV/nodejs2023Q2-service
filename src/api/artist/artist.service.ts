@@ -52,6 +52,10 @@ export class ArtistService {
       }
     });
 
+    this.db.favs.artists = this.db.favs.artists.filter(
+      (storedId) => storedId !== id,
+    );
+
     this.db.artists = this.db.artists.filter((a) => a.id !== atrists.id);
   }
 }

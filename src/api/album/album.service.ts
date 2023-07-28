@@ -45,6 +45,10 @@ export class AlbumService {
       }
     });
 
+    this.db.favs.albums = this.db.favs.albums.filter(
+      (storedId) => storedId !== id,
+    );
+
     this.db.albums = this.db.albums.filter((album) => album.id !== id);
   }
 }
