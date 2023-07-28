@@ -3,12 +3,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
-import { DbService } from '../../db/db.service';
+import { DBService } from '../../db/db.service';
 import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) {}
+  constructor(private db: DBService) {}
 
   create(createUserDto: CreateUserDto): UserEntity {
     const id = uuidv4();

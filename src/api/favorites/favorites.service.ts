@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DbService } from '../../db/db.service';
+import { DBService } from '../../db/db.service';
 import { Artist } from '../artist/interface/artist.interface';
 import { Track } from '../track/interface/track.interface';
 import { Album } from '../album/interface/album.interface';
@@ -19,7 +19,7 @@ type Entity = Artist | Track | Album;
 
 @Injectable()
 export class FavoritesService {
-  constructor(private db: DbService) {}
+  constructor(private db: DBService) {}
   findAll() {
     const entries = Object.entries(this.db.favs) as Entries<
       typeof this.db.favs

@@ -3,11 +3,11 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound } from '../../common/errors';
-import { DbService } from '../../db/db.service';
+import { DBService } from '../../db/db.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DbService) {}
+  constructor(private db: DBService) {}
   create(createTrackDto: CreateTrackDto) {
     const id = uuidv4();
     const track = Object.assign({ id }, createTrackDto);

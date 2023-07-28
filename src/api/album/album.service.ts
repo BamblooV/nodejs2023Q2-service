@@ -3,11 +3,11 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound } from '../../common/errors';
-import { DbService } from '../../db/db.service';
+import { DBService } from '../../db/db.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DbService) {}
+  constructor(private db: DBService) {}
   create(createAlbumDto: CreateAlbumDto) {
     const id = uuidv4();
     const album = Object.assign({ id }, createAlbumDto);

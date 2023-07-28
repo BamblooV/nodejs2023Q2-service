@@ -6,7 +6,7 @@ import { UserEntity } from '../api/user/entity/user.entity';
 import { Favorites } from '../api/favorites/interface/favotites.interface';
 
 @Injectable()
-export class DbService {
+export class DBService {
   users: UserEntity[] = [];
   tracks: Track[] = [];
   artists: Artist[] = [];
