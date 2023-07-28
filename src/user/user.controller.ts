@@ -5,7 +5,6 @@ import {
   Body,
   Param,
   Delete,
-  NotFoundException,
   ParseUUIDPipe,
   Put,
   HttpCode,
@@ -31,11 +30,7 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    const user = this.userService.findOne(id);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    return user;
+    return this.userService.findOne(id);
   }
 
   @Put(':id')

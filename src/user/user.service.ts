@@ -8,6 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { DbService } from '../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './interface/user.interface';
+import secureUser from '../common/utils/secureUser';
 
 @Injectable()
 export class UserService {
@@ -24,23 +25,23 @@ export class UserService {
     };
     this.db.users.push(user);
 
-    const response = { ...user };
-    delete response.password;
-
-    return response;
+    return secureUser(user);
   }
 
   findAll() {
     return this.db.users.map((user) => {
-      const secureUser = { ...user };
-      delete secureUser.password;
-      return secureUser;
+      return secureUser(user);
     });
   }
 
   findOne(id: string) {
     const user = this.db.users.find((user) => user.id === id);
-    return user;
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return secureUser(user);
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
@@ -58,18 +59,11 @@ export class UserService {
     user.updatedAt = Date.now();
     user.version += 1;
 
-    const secureUser = { ...user };
-    delete secureUser.password;
-
-    return secureUser;
+    return secureUser(user);
   }
 
   remove(id: string) {
-    const user = this.db.users.find((user) => user.id === id);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
+    const user = this.findOne(id);
 
     this.db.users = this.db.users.filter((u) => u.id !== user.id);
   }
