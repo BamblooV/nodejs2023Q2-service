@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DbService } from '../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './interface/user.interface';
-import secureUser from '../common/utils/secureUser';
-import { DBNotFound } from '../common/errors/';
-import { ForbiddenOperation } from '../common/errors/';
+import { DBNotFound, ForbiddenOperation } from '../../common/errors';
+import secureUser from '../../common/utils/secureUser';
+import { DbService } from '../../db/db.service';
 
 @Injectable()
 export class UserService {

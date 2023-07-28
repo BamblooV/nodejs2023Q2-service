@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsInt } from 'class-validator';
-import { IsNullable } from '../../common/utils/is-nullabel.decorator';
+import { IsNullable } from '../../../common/utils/is-nullabel.decorator';
 
 export class CreateTrackDto {
   @IsString()

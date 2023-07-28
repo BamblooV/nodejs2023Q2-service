@@ -14,7 +14,7 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { StatusCodes } from 'http-status-codes';
-import { DBNotFound } from '../common/errors';
+import { DBNotFound } from '../../common/errors';
 
 @Controller('album')
 export class AlbumController {

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { DbService } from '../db/db.service';
-import { DBNotFound } from '../common/errors';
+import { DBNotFound } from '../../common/errors';
+import { DbService } from '../../db/db.service';
 
 @Injectable()
 export class AlbumService {
