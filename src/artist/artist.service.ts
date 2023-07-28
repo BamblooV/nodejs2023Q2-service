@@ -46,6 +46,12 @@ export class ArtistService {
       }
     });
 
+    this.db.albums.forEach((album) => {
+      if (album.artistId === id) {
+        album.artistId = null;
+      }
+    });
+
     this.db.artists = this.db.artists.filter((a) => a.id !== atrists.id);
   }
 }

@@ -38,8 +38,8 @@ export class TrackService {
   }
 
   remove(id: string) {
-    const track = this.findOne(id);
+    this.findOne(id);
 
-    this.db.tracks = this.db.tracks.filter((u) => u.id !== track.id);
+    this.db.tracks = this.db.tracks.filter((u) => u.id !== id);
   }
 }
