@@ -8,11 +8,13 @@ import {
   ParseUUIDPipe,
   HttpCode,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
+import DBNotFound from 'src/common/errors/DBNotFound';
 
 @Controller('track')
 export class TrackController {
@@ -30,7 +32,13 @@ export class TrackController {
 
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.trackService.findOne(id);
+    try {
+      return this.trackService.findOne(id);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+    }
   }
 
   @Put(':id')
@@ -38,12 +46,24 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    return this.trackService.update(id, updateTrackDto);
+    try {
+      return this.trackService.update(id, updateTrackDto);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+    }
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.trackService.remove(id);
+    try {
+      return this.trackService.remove(id);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new NotFoundException();
+      }
+    }
   }
 }

@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { DbService } from '../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
+import DBNotFound from 'src/common/errors/DBNotFound';
 
 @Injectable()
 export class TrackService {
@@ -23,7 +24,7 @@ export class TrackService {
     const track = this.db.tracks.find((track) => track.id === id);
 
     if (!track) {
-      throw new NotFoundException();
+      throw new DBNotFound();
     }
 
     return track;
