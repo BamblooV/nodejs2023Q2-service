@@ -45,9 +45,6 @@ export class UserController {
       if (error instanceof DBNotFound) {
         throw new NotFoundException();
       }
-      if (error instanceof ForbiddenOperation) {
-        throw new ForbiddenException();
-      }
     }
   }
 
@@ -76,9 +73,6 @@ export class UserController {
     } catch (error) {
       if (error instanceof DBNotFound) {
         throw new NotFoundException();
-      }
-      if (error instanceof ForbiddenOperation) {
-        throw new ForbiddenException();
       }
     }
   }
