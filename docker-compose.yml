@@ -15,6 +15,16 @@ services:
     app:
         build: .
         container_name: "app"
+        restart: unless-stopped
+        x-develop:
+            watch:
+                - action: sync
+                  path: /src
+                  target: /user/app/src
+                  ignore:
+                    - node_modules/
+                - action: rebuild
+                  path: package.json
         depends_on:
             - postgres
         ports:
@@ -27,7 +37,7 @@ services:
     postgres:
         build: ./database/
         container_name: "postgres"
-        restart: always
+        restart: unless-stopped
         ports:
             - ${POSTGRES_PORT}:${POSTGRES_PORT}
         environment:
