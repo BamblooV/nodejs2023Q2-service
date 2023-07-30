@@ -3,7 +3,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound } from '../../common/errors';
-import { DBService } from '../../db/db.service';
+import { DBEntities, DBService } from '../../db/db.service';
 
 @Injectable()
 export class ArtistService {
@@ -24,7 +24,7 @@ export class ArtistService {
     const atrist = this.db.artists.find((atrist) => atrist.id === id);
 
     if (!atrist) {
-      throw new DBNotFound();
+      throw new DBNotFound(DBEntities.artists);
     }
 
     return atrist;

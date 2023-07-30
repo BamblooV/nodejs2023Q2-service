@@ -4,6 +4,14 @@ import { Artist } from '../api/artist/interface/artist.interface';
 import { Track } from '../api/track/interface/track.interface';
 import { UserEntity } from '../api/user/entity/user.entity';
 import { Favorites } from '../api/favorites/interface/favotites.interface';
+import { DBNotFound } from '../common/errors';
+
+export const enum DBEntities {
+  users = 'users',
+  tracks = 'tracks',
+  artists = 'artists',
+  albums = 'albums',
+}
 
 @Injectable()
 export class DBService {
@@ -16,4 +24,18 @@ export class DBService {
     albums: [],
     tracks: [],
   };
+
+  isEntityExist(id, entityType: DBEntities) {
+    if (id !== null) {
+      const repository: (UserEntity | Track | Artist | Album)[] =
+        this[entityType];
+      const entity = repository.find((entity) => entity.id === id);
+
+      if (!entity) {
+        throw new DBNotFound(entityType);
+      }
+    }
+
+    return true;
+  }
 }

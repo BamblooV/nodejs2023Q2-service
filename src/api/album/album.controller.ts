@@ -9,12 +9,14 @@ import {
   HttpCode,
   NotFoundException,
   Put,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { StatusCodes } from 'http-status-codes';
 import { DBNotFound } from '../../common/errors';
+import { DBEntities } from '../../db/db.service';
 
 @Controller('album')
 export class AlbumController {
@@ -22,7 +24,13 @@ export class AlbumController {
 
   @Post()
   create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+    try {
+      return this.albumService.create(createAlbumDto);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new UnprocessableEntityException(error.message);
+      }
+    }
   }
 
   @Get()
@@ -36,7 +44,7 @@ export class AlbumController {
       return this.albumService.findOne(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -50,7 +58,10 @@ export class AlbumController {
       return this.albumService.update(id, updateAlbumDto);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        if (error.message.endsWith(DBEntities.albums)) {
+          throw new NotFoundException(error.message);
+        }
+        throw new UnprocessableEntityException(error.message);
       }
     }
   }
@@ -62,7 +73,7 @@ export class AlbumController {
       return this.albumService.remove(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }

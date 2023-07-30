@@ -9,12 +9,14 @@ import {
   HttpCode,
   Put,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
 import { DBNotFound } from '../../common/errors';
+import { DBEntities } from '../../db/db.service';
 
 @Controller('track')
 export class TrackController {
@@ -22,7 +24,13 @@ export class TrackController {
 
   @Post()
   create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+    try {
+      return this.trackService.create(createTrackDto);
+    } catch (error) {
+      if (error instanceof DBNotFound) {
+        throw new UnprocessableEntityException(error.message);
+      }
+    }
   }
 
   @Get()
@@ -36,7 +44,7 @@ export class TrackController {
       return this.trackService.findOne(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -50,7 +58,10 @@ export class TrackController {
       return this.trackService.update(id, updateTrackDto);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        if (error.message.endsWith(DBEntities.tracks)) {
+          throw new NotFoundException(error.message);
+        }
+        throw new UnprocessableEntityException(error.message);
       }
     }
   }
@@ -62,7 +73,7 @@ export class TrackController {
       return this.trackService.remove(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }

@@ -28,7 +28,7 @@ export class FavoritesController {
       this.favoritesService.addTrack(trackId);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new UnprocessableEntityException();
+        throw new UnprocessableEntityException(error.message);
       }
     }
   }
@@ -40,7 +40,7 @@ export class FavoritesController {
       this.favoritesService.removeTrack(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -51,7 +51,7 @@ export class FavoritesController {
       this.favoritesService.addAlbum(albumId);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new UnprocessableEntityException();
+        throw new UnprocessableEntityException(error.message);
       }
     }
   }
@@ -63,7 +63,7 @@ export class FavoritesController {
       this.favoritesService.removeAlbum(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -76,7 +76,7 @@ export class FavoritesController {
       this.favoritesService.addArtist(artistId);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new UnprocessableEntityException();
+        throw new UnprocessableEntityException(error.message);
       }
     }
   }
@@ -88,7 +88,7 @@ export class FavoritesController {
       this.favoritesService.removeArtist(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
