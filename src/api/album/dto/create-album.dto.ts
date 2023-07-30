@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsUUID } from 'class-validator';
 import { IsNullable } from '../../../common/utils/is-nullabel.decorator';
 
 export class CreateAlbumDto {
@@ -10,5 +10,6 @@ export class CreateAlbumDto {
   @IsNullable()
   @IsString()
   @IsNotEmpty()
+  @IsUUID('4')
   artistId: string | null;
 }

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsUUID } from 'class-validator';
 import { IsNullable } from '../../../common/utils/is-nullabel.decorator';
 
 export class CreateTrackDto {
@@ -8,10 +8,12 @@ export class CreateTrackDto {
   @IsNullable()
   @IsString()
   @IsNotEmpty()
+  @IsUUID('4')
   artistId: string | null;
   @IsNullable()
   @IsString()
   @IsNotEmpty()
+  @IsUUID('4')
   albumId: string | null;
   @IsInt()
   duration: number;
