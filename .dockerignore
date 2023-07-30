@@ -1,0 +1,11 @@
+/dist
+/node_modules
+/database
+/doc
+.env
+.env.example
+db.drawio
+Makefile
+README.md
+/.git
+.gitignore
