@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
-import { DBService } from '../../db/db.service';
+import { DBEntities, DBService } from '../../db/db.service';
 import { UserEntity } from './entity/user.entity';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class UserService {
     const user = this.db.users.find((user) => user.id === id);
 
     if (!user) {
-      throw new DBNotFound();
+      throw new DBNotFound(DBEntities.users);
     }
 
     return user;

@@ -43,7 +43,7 @@ export class UserController {
       return this.userService.findOne(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -57,10 +57,10 @@ export class UserController {
       return this.userService.update(id, updateUserDto);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
       if (error instanceof ForbiddenOperation) {
-        throw new ForbiddenException();
+        throw new ForbiddenException(error.message);
       }
     }
   }
@@ -72,7 +72,7 @@ export class UserController {
       return this.userService.remove(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }

@@ -36,7 +36,7 @@ export class ArtistController {
       return this.artistService.findOne(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -50,7 +50,7 @@ export class ArtistController {
       return this.artistService.update(id, updateArtistDto);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }
@@ -62,7 +62,7 @@ export class ArtistController {
       this.artistService.remove(id);
     } catch (error) {
       if (error instanceof DBNotFound) {
-        throw new NotFoundException();
+        throw new NotFoundException(error.message);
       }
     }
   }

@@ -1,5 +1,5 @@
 export class DBNotFound extends Error {
-  constructor(message: string = 'Failed to find db entity') {
-    super(message);
+  constructor(entityType: string = '') {
+    super('Failed to find db entity ' + entityType);
   }
 }
