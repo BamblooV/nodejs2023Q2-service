@@ -35,6 +35,10 @@ export class AlbumService {
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
     const album = this.findOne(id);
+    const { artistId } = updateAlbumDto;
+
+    this.db.isEntityExist(artistId, DBEntities.artists);
+
     Object.assign(album, updateAlbumDto);
 
     return album;

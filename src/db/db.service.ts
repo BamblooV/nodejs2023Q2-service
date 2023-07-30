@@ -26,7 +26,7 @@ export class DBService {
   };
 
   isEntityExist(id, entityType: DBEntities) {
-    if (id !== null) {
+    if (id) {
       const repository: (UserEntity | Track | Artist | Album)[] =
         this[entityType];
       const entity = repository.find((entity) => entity.id === id);
