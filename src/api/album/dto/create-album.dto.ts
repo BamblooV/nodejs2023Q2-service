@@ -5,8 +5,10 @@ export class CreateAlbumDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
   @IsInt()
   year: number;
+
   @IsNullable()
   @IsString()
   @IsNotEmpty()
