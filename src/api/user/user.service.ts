@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
 import { DBEntities, DBService } from '../../db/db.service';
-import { UserEntity } from './entity/user.entity';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {

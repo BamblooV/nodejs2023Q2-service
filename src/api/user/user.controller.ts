@@ -18,7 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
 import { DBNotFound, ForbiddenOperation } from '../../common/errors';
-import { UserEntity } from './entity/user.entity';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
