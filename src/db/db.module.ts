@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { DBService } from './db.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from './datasource/ormconfig';
+import { dataSourceOptions } from './ormconfig';
 
 @Global()
 @Module({

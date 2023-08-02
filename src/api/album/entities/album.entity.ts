@@ -21,8 +21,7 @@ export class AlbumEntity implements Album {
 
   @OneToOne(() => ArtistEntity, (artist) => artist.id, { onDelete: 'SET NULL' })
   @JoinColumn()
-  atrist: ArtistEntity;
+  artist: ArtistEntity;
 
-  @Column({ nullable: true })
-  artistId: string | null;
+  artistId: string;
 }
