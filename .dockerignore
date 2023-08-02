@@ -1,4 +1,5 @@
 /dist
+/db-data
 /node_modules
 /database
 /doc
