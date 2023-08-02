@@ -1,2 +1,3 @@
-export { ForbiddenOperation } from './ForbiddenOperation';
-export { DBNotFound } from './DBNotFound';
+export { ForbiddenOperationError } from './ForbiddenOperationError';
+export { DbNotFoundError } from './DbNotFoundError';
+export { UserNotFoundError } from './UserNotFoundError';

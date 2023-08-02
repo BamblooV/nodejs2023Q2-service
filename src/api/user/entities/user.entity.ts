@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { User } from '../interface/user.interface';
 import {
   Column,
@@ -25,10 +25,12 @@ export class UserEntity implements User {
   version: number;
 
   @CreateDateColumn()
-  createdAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  createdAt: Date | number;
 
   @UpdateDateColumn()
-  updatedAt: number;
+  @Transform(({ value }) => new Date(value).getTime())
+  updatedAt: Date | number;
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

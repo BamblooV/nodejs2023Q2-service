@@ -17,7 +17,10 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
-import { DBNotFound, ForbiddenOperation } from '../../common/errors';
+import {
+  ForbiddenOperationError,
+  UserNotFoundError,
+} from '../../common/errors';
 import { UserEntity } from './entities/user.entity';
 
 @Controller('user')
@@ -26,54 +29,57 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): UserEntity {
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
+  async findAll(): Promise<UserEntity[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): UserEntity {
+  ): Promise<UserEntity> {
     try {
-      return this.userService.findOne(id);
+      return await this.userService.findOne(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): UserEntity {
+  ): Promise<UserEntity> {
     try {
-      return this.userService.update(id, updateUserDto);
+      return await this.userService.update(id, updateUserDto);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
-      if (error instanceof ForbiddenOperation) {
+      if (error instanceof ForbiddenOperationError) {
         throw new ForbiddenException(error.message);
       }
+      throw error;
     }
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {
-      return this.userService.remove(id);
+      await this.userService.remove(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 }
