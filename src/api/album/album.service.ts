@@ -1,62 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DBNotFound } from '../../common/errors';
-import { DBEntities, DBService } from '../../db/db.service';
+import { AlbumNotFoundError } from '../../common/errors';
+import { AlbumEntity } from './entities/album.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DBService) {}
-  create(createAlbumDto: CreateAlbumDto) {
-    const id = uuidv4();
-    const { artistId } = createAlbumDto;
+  constructor(
+    @InjectRepository(AlbumEntity)
+    private readonly albumRepository: Repository<AlbumEntity>,
+  ) {}
 
-    this.db.isEntityExist(artistId, DBEntities.artists);
+  async create(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
+    const album = this.albumRepository.create(createAlbumDto);
 
-    const album = Object.assign({ id }, createAlbumDto);
-    this.db.albums.push(album);
-    return album;
+    return await this.albumRepository.save(album);
   }
 
-  findAll() {
-    return this.db.albums;
+  async findAll(): Promise<AlbumEntity[]> {
+    return await this.albumRepository.find();
   }
 
-  findOne(id: string) {
-    const album = this.db.albums.find((album) => album.id === id);
+  async findOne(id: string): Promise<AlbumEntity> {
+    const album = await this.albumRepository.findOne({
+      where: { id },
+    });
 
-    if (!album) {
-      throw new DBNotFound(DBEntities.albums);
+    if (album === null) {
+      throw new AlbumNotFoundError(id);
     }
 
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
-    const { artistId } = updateAlbumDto;
+  async update(
+    id: string,
+    updateAlbumDto: UpdateAlbumDto,
+  ): Promise<AlbumEntity> {
+    await this.findOne(id);
 
-    this.db.isEntityExist(artistId, DBEntities.artists);
+    await this.albumRepository.update(id, updateAlbumDto);
 
-    Object.assign(album, updateAlbumDto);
-
-    return album;
+    return await this.findOne(id);
   }
 
-  remove(id: string) {
-    this.findOne(id);
+  async remove(id: string) {
+    await this.findOne(id);
 
-    this.db.tracks.forEach((track) => {
-      if (track.albumId == id) {
-        track.albumId = null;
-      }
-    });
-
-    this.db.favs.albums = this.db.favs.albums.filter(
-      (storedId) => storedId !== id,
-    );
-
-    this.db.albums = this.db.albums.filter((album) => album.id !== id);
+    await this.albumRepository.delete(id);
   }
 }
