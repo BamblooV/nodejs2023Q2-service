@@ -2,7 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Album } from '../interface/album.interface';
@@ -19,7 +19,7 @@ export class AlbumEntity implements Album {
   @Column()
   year: number;
 
-  @OneToOne(() => ArtistEntity, (artist) => artist.id, {
+  @ManyToOne(() => ArtistEntity, (artist) => artist.id, {
     onDelete: 'SET NULL',
   })
   @JoinColumn()
