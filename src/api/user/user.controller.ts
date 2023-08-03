@@ -30,12 +30,12 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.userService.create(createUserDto);
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
   async findAll(): Promise<UserEntity[]> {
-    return this.userService.findAll();
+    return await this.userService.findAll();
   }
 
   @Get(':id')
@@ -48,6 +48,7 @@ export class UserController {
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
+
       throw error;
     }
   }
@@ -66,6 +67,7 @@ export class UserController {
       if (error instanceof ForbiddenOperationError) {
         throw new ForbiddenException(error.message);
       }
+
       throw error;
     }
   }
@@ -79,6 +81,7 @@ export class UserController {
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
+
       throw error;
     }
   }
