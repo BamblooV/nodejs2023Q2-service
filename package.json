@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "docker:start": "docker compose up -d",
-    "docker:dev": "docker compose -f docker-compose-dev.yml up -d --build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up -d --build",
     "docker:scan": "docker scout cves nodejs2023q2-service-app && docker scout cves nodejs2023q2-service-postgres",
     "docker:run": "npm run docker:start && npm run docker:scan",
     "start": "nest start",
