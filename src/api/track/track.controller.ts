@@ -9,72 +9,67 @@ import {
   HttpCode,
   Put,
   NotFoundException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
-import { DBNotFound } from '../../common/errors';
-import { DBEntities } from '../../db/db.service';
+import { TrackNotFoundError } from '../../common/errors';
 
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
-    try {
-      return this.trackService.create(createTrackDto);
-    } catch (error) {
-      if (error instanceof DBNotFound) {
-        throw new UnprocessableEntityException(error.message);
-      }
-    }
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.trackService.create(createTrackDto);
   }
 
   @Get()
-  findAll() {
-    return this.trackService.findAll();
+  async findAll() {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {
-      return this.trackService.findOne(id);
+      return await this.trackService.findOne(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }
+
+      throw error;
     }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
     try {
-      return this.trackService.update(id, updateTrackDto);
+      return await this.trackService.update(id, updateTrackDto);
     } catch (error) {
-      if (error instanceof DBNotFound) {
-        if (error.message.endsWith(DBEntities.tracks)) {
-          throw new NotFoundException(error.message);
-        }
-        throw new UnprocessableEntityException(error.message);
+      if (error instanceof TrackNotFoundError) {
+        throw new NotFoundException(error.message);
       }
+
+      throw error;
     }
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {
-      return this.trackService.remove(id);
+      return await this.trackService.remove(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }
+
+      throw error;
     }
   }
 }

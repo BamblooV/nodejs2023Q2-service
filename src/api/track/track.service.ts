@@ -1,59 +1,52 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DBNotFound } from '../../common/errors';
-import { DBEntities, DBService } from '../../db/db.service';
+import { TrackNotFoundError } from '../../common/errors';
+import { TrackEntity } from './entities/track.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DBService) {}
-  create(createTrackDto: CreateTrackDto) {
-    const id = uuidv4();
-    const { albumId, artistId } = createTrackDto;
+  constructor(
+    @InjectRepository(TrackEntity)
+    private readonly trackRepository: Repository<TrackEntity>,
+  ) {}
 
-    this.db.isEntityExist(albumId, DBEntities.albums);
-    this.db.isEntityExist(artistId, DBEntities.artists);
+  async create(createTrackDto: CreateTrackDto): Promise<TrackEntity> {
+    const track = this.trackRepository.create(createTrackDto);
 
-    const track = Object.assign({ id }, createTrackDto);
-    this.db.tracks.push(track);
-
-    return track;
+    return await this.trackRepository.save(track);
   }
 
-  findAll() {
-    return this.db.tracks;
+  async findAll(): Promise<TrackEntity[]> {
+    return await this.trackRepository.find();
   }
 
-  findOne(id: string) {
-    const track = this.db.tracks.find((track) => track.id === id);
+  async findOne(id: string): Promise<TrackEntity> {
+    const track = await this.trackRepository.findOne({ where: { id } });
 
-    if (!track) {
-      throw new DBNotFound(DBEntities.tracks);
+    if (track === null) {
+      throw new TrackNotFoundError(id);
     }
 
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = this.findOne(id);
-    const { albumId, artistId } = updateTrackDto;
+  async update(
+    id: string,
+    updateTrackDto: UpdateTrackDto,
+  ): Promise<TrackEntity> {
+    await this.findOne(id);
 
-    this.db.isEntityExist(albumId, DBEntities.albums);
-    this.db.isEntityExist(artistId, DBEntities.artists);
+    this.trackRepository.update(id, updateTrackDto);
 
-    Object.assign(track, updateTrackDto);
-
-    return track;
+    return await this.findOne(id);
   }
 
-  remove(id: string) {
-    this.findOne(id);
+  async remove(id: string) {
+    await this.findOne(id);
 
-    this.db.favs.tracks = this.db.favs.tracks.filter(
-      (storedId) => storedId !== id,
-    );
-
-    this.db.tracks = this.db.tracks.filter((u) => u.id !== id);
+    await this.trackRepository.delete(id);
   }
 }

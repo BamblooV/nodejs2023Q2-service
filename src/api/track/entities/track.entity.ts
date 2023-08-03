@@ -21,13 +21,15 @@ export class TrackEntity implements Track {
   @JoinColumn()
   artist: ArtistEntity;
 
-  artistId: string;
+  @Column({ nullable: true })
+  artistId: string | null;
 
   @OneToOne(() => AlbumEntity, (album) => album.id, { onDelete: 'SET NULL' })
   @JoinColumn()
   album: AlbumEntity;
 
-  albumId: string;
+  @Column({ nullable: true })
+  albumId: string | null;
 
   @Column()
   duration: number;
