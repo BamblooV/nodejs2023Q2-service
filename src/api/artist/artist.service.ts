@@ -1,61 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { DBNotFound } from '../../common/errors';
-import { DBEntities, DBService } from '../../db/db.service';
+import { ArtistNotFoundError } from '../../common/errors';
+import { Repository } from 'typeorm';
+import { ArtistEntity } from './entities/artist.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DBService) {}
-  create(createArtistDto: CreateArtistDto) {
-    const id = uuidv4();
-    const artist = Object.assign({ id }, createArtistDto);
-    this.db.artists.push(artist);
+  constructor(
+    @InjectRepository(ArtistEntity)
+    private readonly artistRepository: Repository<ArtistEntity>,
+  ) {}
 
-    return artist;
+  async create(createArtistDto: CreateArtistDto): Promise<ArtistEntity> {
+    const artist = this.artistRepository.create(createArtistDto);
+
+    return await this.artistRepository.save(artist);
   }
 
-  findAll() {
-    return this.db.artists;
+  async findAll(): Promise<ArtistEntity[]> {
+    return await this.artistRepository.find();
   }
 
-  findOne(id: string) {
-    const atrist = this.db.artists.find((atrist) => atrist.id === id);
+  async findOne(id: string): Promise<ArtistEntity> {
+    const artist = await this.artistRepository.findOne({
+      where: {
+        id,
+      },
+    });
 
-    if (!atrist) {
-      throw new DBNotFound(DBEntities.artists);
+    if (artist === null) {
+      throw new ArtistNotFoundError(id);
     }
 
-    return atrist;
-  }
-
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.findOne(id);
-    Object.assign(artist, updateArtistDto);
-
     return artist;
   }
 
-  remove(id: string) {
-    const atrists = this.findOne(id);
+  async update(
+    id: string,
+    updateArtistDto: UpdateArtistDto,
+  ): Promise<ArtistEntity> {
+    await this.findOne(id);
 
-    this.db.tracks.forEach((track) => {
-      if (track.artistId === id) {
-        track.artistId = null;
-      }
-    });
+    await this.artistRepository.update(id, updateArtistDto);
 
-    this.db.albums.forEach((album) => {
-      if (album.artistId === id) {
-        album.artistId = null;
-      }
-    });
+    return await this.findOne(id);
+  }
 
-    this.db.favs.artists = this.db.favs.artists.filter(
-      (storedId) => storedId !== id,
-    );
+  async remove(id: string) {
+    await this.findOne(id);
 
-    this.db.artists = this.db.artists.filter((a) => a.id !== atrists.id);
+    await this.artistRepository.delete(id);
   }
 }
