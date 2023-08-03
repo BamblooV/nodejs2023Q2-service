@@ -19,11 +19,11 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const user = this.userRepository.create(createUserDto);
 
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async findAll(): Promise<UserEntity[]> {
-    return this.userRepository.find();
+    return await this.userRepository.find();
   }
 
   async findOne(id: string): Promise<UserEntity> {
