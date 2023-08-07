@@ -52,6 +52,7 @@ services:
             - ./db-data:/var/lib/postgresql/data
         networks:
             - user-defined
+        command: ["postgres", "-c", "log_statement=all", "-c", "logging_collector=on"]
 
 volumes:
     db-data:
