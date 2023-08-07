@@ -11,85 +11,105 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { StatusCodes } from 'http-status-codes';
-import { DBNotFound } from '../../common/errors';
+import {
+  AlbumNotFoundError,
+  ArtistNotFoundError,
+  TrackNotFoundError,
+} from '../../common/errors';
 
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
   @Get()
-  findAll() {
-    return this.favoritesService.findAll();
+  async findAll() {
+    return await this.favoritesService.findAll();
   }
 
   @Post('track/:id')
-  addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) trackId: string) {
+  async addTrack(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) trackId: string,
+  ) {
     try {
-      this.favoritesService.addTrack(trackId);
+      await this.favoritesService.addTrack(trackId);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof TrackNotFoundError) {
         throw new UnprocessableEntityException(error.message);
       }
+      throw error;
     }
   }
 
   @HttpCode(StatusCodes.NO_CONTENT)
   @Delete('track/:id')
-  removeTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async removeTrack(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
     try {
-      this.favoritesService.removeTrack(id);
+      await this.favoritesService.removeTrack(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) albumId: string) {
+  async addAlbum(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) albumId: string,
+  ) {
     try {
-      this.favoritesService.addAlbum(albumId);
+      await this.favoritesService.addAlbum(albumId);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof AlbumNotFoundError) {
         throw new UnprocessableEntityException(error.message);
       }
+      throw error;
     }
   }
 
   @HttpCode(StatusCodes.NO_CONTENT)
   @Delete('album/:id')
-  removeAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async removeAlbum(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
     try {
-      this.favoritesService.removeAlbum(id);
+      await this.favoritesService.removeAlbum(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof AlbumNotFoundError) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 
   @Post('artist/:id')
-  addArtist(
+  async addArtist(
     @Param('id', new ParseUUIDPipe({ version: '4' })) artistId: string,
   ) {
     try {
-      this.favoritesService.addArtist(artistId);
+      await this.favoritesService.addArtist(artistId);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof ArtistNotFoundError) {
         throw new UnprocessableEntityException(error.message);
       }
+      throw error;
     }
   }
 
   @HttpCode(StatusCodes.NO_CONTENT)
   @Delete('artist/:id')
-  removeArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async removeArtist(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
     try {
-      this.favoritesService.removeArtist(id);
+      await this.favoritesService.removeArtist(id);
     } catch (error) {
-      if (error instanceof DBNotFound) {
+      if (error instanceof ArtistNotFoundError) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 }
