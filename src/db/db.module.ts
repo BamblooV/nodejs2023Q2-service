@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { DBService } from './db.service';
+import { DbService } from './db.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './ormconfig';
 
@@ -7,7 +7,7 @@ import { dataSourceOptions } from './ormconfig';
 @Module({
   controllers: [],
   imports: [TypeOrmModule.forRoot(dataSourceOptions)],
-  providers: [DBService],
-  exports: [DBService],
+  providers: [DbService],
+  exports: [DbService],
 })
 export class DbModule {}

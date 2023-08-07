@@ -3,28 +3,24 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackNotFoundError } from '../../common/errors';
 import { TrackEntity } from './entities/track.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DbService } from '../../db/db.service';
 
 @Injectable()
 export class TrackService {
-  constructor(
-    @InjectRepository(TrackEntity)
-    private readonly trackRepository: Repository<TrackEntity>,
-  ) {}
+  constructor(private readonly db: DbService) {}
 
   async create(createTrackDto: CreateTrackDto): Promise<TrackEntity> {
-    const track = this.trackRepository.create(createTrackDto);
+    const track = this.db.trackRepository.create(createTrackDto);
 
-    return await this.trackRepository.save(track);
+    return await this.db.trackRepository.save(track);
   }
 
   async findAll(): Promise<TrackEntity[]> {
-    return await this.trackRepository.find();
+    return await this.db.trackRepository.find();
   }
 
   async findOne(id: string): Promise<TrackEntity> {
-    const track = await this.trackRepository.findOne({ where: { id } });
+    const track = await this.db.trackRepository.findOne({ where: { id } });
 
     if (track === null) {
       throw new TrackNotFoundError(id);
@@ -39,7 +35,7 @@ export class TrackService {
   ): Promise<TrackEntity> {
     await this.findOne(id);
 
-    this.trackRepository.update(id, updateTrackDto);
+    this.db.trackRepository.update(id, updateTrackDto);
 
     return await this.findOne(id);
   }
@@ -47,6 +43,6 @@ export class TrackService {
   async remove(id: string) {
     await this.findOne(id);
 
-    await this.trackRepository.delete(id);
+    await this.db.trackRepository.delete(id);
   }
 }

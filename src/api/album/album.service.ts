@@ -3,28 +3,25 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumNotFoundError } from '../../common/errors';
 import { AlbumEntity } from './entities/album.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+
+import { DbService } from '../../db/db.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(
-    @InjectRepository(AlbumEntity)
-    private readonly albumRepository: Repository<AlbumEntity>,
-  ) {}
+  constructor(private readonly db: DbService) {}
 
   async create(createAlbumDto: CreateAlbumDto): Promise<AlbumEntity> {
-    const album = this.albumRepository.create(createAlbumDto);
+    const album = this.db.albumRepository.create(createAlbumDto);
 
-    return await this.albumRepository.save(album);
+    return await this.db.albumRepository.save(album);
   }
 
   async findAll(): Promise<AlbumEntity[]> {
-    return await this.albumRepository.find();
+    return await this.db.albumRepository.find();
   }
 
   async findOne(id: string): Promise<AlbumEntity> {
-    const album = await this.albumRepository.findOne({
+    const album = await this.db.albumRepository.findOne({
       where: { id },
     });
 
@@ -41,7 +38,7 @@ export class AlbumService {
   ): Promise<AlbumEntity> {
     await this.findOne(id);
 
-    await this.albumRepository.update(id, updateAlbumDto);
+    await this.db.albumRepository.update(id, updateAlbumDto);
 
     return await this.findOne(id);
   }
@@ -49,6 +46,6 @@ export class AlbumService {
   async remove(id: string) {
     await this.findOne(id);
 
-    await this.albumRepository.delete(id);
+    await this.db.albumRepository.delete(id);
   }
 }

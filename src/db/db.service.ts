@@ -1,41 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from '../api/album/interface/album.interface';
-import { Artist } from '../api/artist/interface/artist.interface';
-import { Track } from '../api/track/interface/track.interface';
+import { Repository } from 'typeorm';
+import { ArtistEntity } from '../api/artist/entities/artist.entity';
+import { AlbumEntity } from '../api/album/entities/album.entity';
+import { ArtistFav, AlbumFav, TrackFav } from '../api/favorites/entities';
+import { TrackEntity } from '../api/track/entities/track.entity';
 import { UserEntity } from '../api/user/entities/user.entity';
-import { Favorites } from '../api/favorites/interface/favorites.interface';
-import { DBNotFound } from '../common/errors';
-
-export const enum DBEntities {
-  users = 'users',
-  tracks = 'tracks',
-  artists = 'artists',
-  albums = 'albums',
-}
+import { dataSource } from './ormconfig';
 
 @Injectable()
-export class DBService {
-  users: UserEntity[] = [];
-  tracks: Track[] = [];
-  artists: Artist[] = [];
-  albums: Album[] = [];
-  favs: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-
-  isEntityExist(id, entityType: DBEntities) {
-    if (id) {
-      const repository: (UserEntity | Track | Artist | Album)[] =
-        this[entityType];
-      const entity = repository.find((entity) => entity.id === id);
-
-      if (!entity) {
-        throw new DBNotFound(entityType);
-      }
-    }
-
-    return true;
+export class DbService {
+  public readonly artistRepository: Repository<ArtistEntity>;
+  public readonly albumRepository: Repository<AlbumEntity>;
+  public readonly trackRepository: Repository<TrackEntity>;
+  public readonly artistfavRepository: Repository<ArtistFav>;
+  public readonly albumfavRepository: Repository<AlbumFav>;
+  public readonly trackfavRepository: Repository<TrackFav>;
+  public readonly userRepository: Repository<UserEntity>;
+  constructor() {
+    this.artistRepository = dataSource.getRepository(ArtistEntity);
+    this.albumRepository = dataSource.getRepository(AlbumEntity);
+    this.trackRepository = dataSource.getRepository(TrackEntity);
+    this.artistfavRepository = dataSource.getRepository(ArtistFav);
+    this.albumfavRepository = dataSource.getRepository(AlbumFav);
+    this.trackfavRepository = dataSource.getRepository(TrackFav);
+    this.userRepository = dataSource.getRepository(UserEntity);
   }
 }
