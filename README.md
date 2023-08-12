@@ -22,6 +22,7 @@ npm install
 1. Create `.env` file in root folder. You can just rename `.env.example`
 2. Specify `PORT`. (4000 as default)
 Change  port in `doc/api.yaml` on 8 line if you want use swagger to interact with api.
+3. Specify `POSTGRES_HOST`. If yoy want run app localy it should be `localhost`. If you want run app in docker container it should be `postgres`.
 
 ## Running application
 App require running database. You should run db if you want run app locally.
