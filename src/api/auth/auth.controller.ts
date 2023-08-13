@@ -12,13 +12,15 @@ import {
   ForbiddenOperationError,
   UserNotFoundError,
 } from '../../common/errors';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @Public()
   async login(@Body() signInDto: LogInUserDto) {
     try {
       return await this.authService.logIn(signInDto);
