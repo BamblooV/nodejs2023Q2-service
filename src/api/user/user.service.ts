@@ -55,4 +55,14 @@ export class UserService {
 
     await this.db.userRepository.delete(id);
   }
+
+  async findOneByLogin(login: string) {
+    const user = await this.db.userRepository.findOneBy({ login });
+
+    if (user === null) {
+      throw new UserNotFoundError(login);
+    }
+
+    return user;
+  }
 }

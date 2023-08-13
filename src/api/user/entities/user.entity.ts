@@ -14,7 +14,7 @@ export class UserEntity implements User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   login: string;
 
   @Exclude()
