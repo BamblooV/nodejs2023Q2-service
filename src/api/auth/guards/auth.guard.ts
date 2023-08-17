@@ -8,12 +8,15 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { UserService } from '../../user/user.service';
+import { JwtPayload } from '../interfaces/JwtPayload.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -31,10 +34,18 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET_KEY,
-      });
-      request['user'] = payload;
+      const { userId, login } = await this.jwtService.verifyAsync<JwtPayload>(
+        token,
+        {
+          secret: process.env.JWT_SECRET_KEY,
+        },
+      );
+
+      const user = await this.userService.findOne(userId);
+
+      if (user.login !== login) {
+        throw new Error('Wrong Token');
+      }
     } catch {
       throw new UnauthorizedException();
     }

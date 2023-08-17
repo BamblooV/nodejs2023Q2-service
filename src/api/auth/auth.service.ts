@@ -7,6 +7,8 @@ import {
 } from '../../common/errors';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { JwtPayload } from './interfaces/JwtPayload.interface';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -18,11 +20,19 @@ export class AuthService {
   async logIn(user: LogInUserDto) {
     const storedUser = await this.userService.findOneByLogin(user.login);
 
-    if (user.password !== storedUser.password) {
+    const isValidPassword = await bcrypt.compare(
+      user.password,
+      storedUser.password,
+    );
+
+    if (!isValidPassword) {
       throw new ForbiddenOperationError();
     }
 
-    const payload = { userId: storedUser.id, login: storedUser.login };
+    const payload: JwtPayload = {
+      userId: storedUser.id,
+      login: storedUser.login,
+    };
 
     return {
       accessToken: await this.jwtService.signAsync(payload),
