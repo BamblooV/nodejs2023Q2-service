@@ -47,8 +47,8 @@ export class UserService {
     const user = await this.findOne(id);
 
     const isValidPassword = await bcrypt.compare(
-      user.password,
       updateUserDto.oldPassword,
+      user.password,
     );
 
     if (!isValidPassword) {
