@@ -47,6 +47,8 @@ export class AuthGuard implements CanActivate {
       if (user.login !== login) {
         throw new BadTokenError();
       }
+
+      request['token'] = { userId, login };
     } catch {
       throw new UnauthorizedException();
     }
