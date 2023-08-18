@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { JwtPayload } from './interfaces/JwtPayload.interface';
 import bcrypt from 'bcryptjs';
+import { BadTokenError } from '../../common/errors/BadTokenError';
 
 @Injectable()
 export class AuthService {
@@ -34,13 +35,7 @@ export class AuthService {
       login: storedUser.login,
     };
 
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-        secret: process.env.JWT_SECRET_REFRESH_KEY,
-      }),
-    };
+    return await this.generateTokens(payload);
   }
 
   async signup(createUserDto: CreateUserDto) {
@@ -50,5 +45,37 @@ export class AuthService {
     } catch (error) {
       throw new UserCreatingError();
     }
+  }
+
+  async refresh(refreshToken: string) {
+    let login: string, userId: string;
+    try {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(
+        refreshToken,
+        { secret: process.env.JWT_SECRET_REFRESH_KEY },
+      );
+      login = payload.login;
+      userId = payload.userId;
+    } catch (error) {
+      throw new BadTokenError();
+    }
+
+    const user = await this.userService.findOne(userId);
+
+    if (user.login !== login) {
+      throw new BadTokenError();
+    }
+
+    return await this.generateTokens({ login, userId });
+  }
+
+  private async generateTokens(payload: JwtPayload) {
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      }),
+    };
   }
 }

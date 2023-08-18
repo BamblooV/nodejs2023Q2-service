@@ -10,6 +10,7 @@ import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { UserService } from '../../user/user.service';
 import { JwtPayload } from '../interfaces/JwtPayload.interface';
+import { BadTokenError } from '../../../common/errors/BadTokenError';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -44,7 +45,7 @@ export class AuthGuard implements CanActivate {
       const user = await this.userService.findOne(userId);
 
       if (user.login !== login) {
-        throw new Error('Wrong Token');
+        throw new BadTokenError();
       }
     } catch {
       throw new UnauthorizedException();

@@ -16,6 +16,8 @@ import {
 } from '../../common/errors';
 import { Public } from './decorators/public.decorator';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { RefreshTokensDto } from './dto/refresh-tokets.dto';
+import { BadTokenError } from '../../common/errors/BadTokenError';
 
 @Controller('auth')
 export class AuthController {
@@ -46,6 +48,19 @@ export class AuthController {
     } catch (error) {
       if (error instanceof UserCreatingError) {
         throw new ConflictException();
+      }
+      throw error;
+    }
+  }
+
+  @Post('refresh')
+  @Public()
+  async refresh(@Body() { refreshToken }: RefreshTokensDto) {
+    try {
+      return await this.authService.refresh(refreshToken);
+    } catch (error) {
+      if (error instanceof BadTokenError) {
+        throw new ForbiddenException();
       }
       throw error;
     }
