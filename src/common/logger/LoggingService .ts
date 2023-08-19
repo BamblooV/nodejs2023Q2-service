@@ -1,28 +1,29 @@
-import { Injectable, LoggerService, Scope } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  Injectable,
+  LoggerService,
+  Scope,
+} from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class LoggingService implements LoggerService {
-  log(message: any, ...optionalParams: any[]) {
-    console.log(new Date().toISOString(), 'LOG ', message);
+export class LoggingService extends ConsoleLogger implements LoggerService {
+  log(message: any) {
+    super.log(message);
   }
 
-  error(message: any, ...optionalParams: any[]) {
-    console.log(new Date().toISOString(), 'ERROR ', message);
+  error(message: any) {
+    super.error(message);
   }
 
-  warn(message: any, ...optionalParams: any[]) {
-    console.log(new Date().toISOString(), 'WARN ', message);
+  warn(message: any) {
+    super.warn(message);
   }
 
-  debug(message: any, ...optionalParams: any[]) {
-    console.log(new Date().toISOString(), 'DEBUG ', message);
+  debug(message: any) {
+    super.debug(message);
   }
 
-  verbose(message: any, ...optionalParams: any[]) {
-    console.log(new Date().toISOString(), 'VERBOSE ', message);
+  verbose(message: any) {
+    super.verbose(message);
   }
-
-  // setLogLevels(levels: LogLevel[]) {
-  //   console.log('levels ', levels);
-  // }
 }
