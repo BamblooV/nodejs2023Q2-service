@@ -5,6 +5,7 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { LoggerModule } from '../../common/logger/logger.module';
 
 @Module({
   controllers: [AuthController],
@@ -16,6 +17,7 @@ import { APP_GUARD } from '@nestjs/core';
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME },
     }),
+    LoggerModule,
   ],
 })
 export class AuthModule {}

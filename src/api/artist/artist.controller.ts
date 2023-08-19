@@ -15,10 +15,14 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { StatusCodes } from 'http-status-codes';
 import { ArtistNotFoundError } from '../../common/errors';
+import { LoggingService } from '../../common/logger/LoggingService ';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(
+    private readonly artistService: ArtistService,
+    private readonly logger: LoggingService,
+  ) {}
 
   @Post()
   async create(@Body() createArtistDto: CreateArtistDto) {
@@ -35,6 +39,7 @@ export class ArtistController {
     try {
       return await this.artistService.findOne(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof ArtistNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -51,6 +56,7 @@ export class ArtistController {
     try {
       return await this.artistService.update(id, updateArtistDto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof ArtistNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -65,6 +71,7 @@ export class ArtistController {
     try {
       await this.artistService.remove(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof ArtistNotFoundError) {
         throw new NotFoundException(error.message);
       }

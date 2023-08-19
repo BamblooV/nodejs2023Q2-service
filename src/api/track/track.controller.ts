@@ -15,10 +15,14 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
 import { TrackNotFoundError } from '../../common/errors';
+import { LoggingService } from '../../common/logger/LoggingService ';
 
 @Controller('track')
 export class TrackController {
-  constructor(private readonly trackService: TrackService) {}
+  constructor(
+    private readonly trackService: TrackService,
+    private readonly logger: LoggingService,
+  ) {}
 
   @Post()
   async create(@Body() createTrackDto: CreateTrackDto) {
@@ -35,6 +39,7 @@ export class TrackController {
     try {
       return await this.trackService.findOne(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -51,6 +56,7 @@ export class TrackController {
     try {
       return await this.trackService.update(id, updateTrackDto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -65,6 +71,7 @@ export class TrackController {
     try {
       return await this.trackService.remove(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof TrackNotFoundError) {
         throw new NotFoundException(error.message);
       }

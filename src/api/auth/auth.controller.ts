@@ -18,10 +18,14 @@ import { Public } from './decorators/public.decorator';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { RefreshTokensDto } from './dto/refresh-tokets.dto';
 import { BadTokenError } from '../../common/errors/BadTokenError';
+import { LoggingService } from '../../common/logger/LoggingService ';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly logger: LoggingService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -30,6 +34,7 @@ export class AuthController {
     try {
       return await this.authService.logIn(signInDto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof ForbiddenOperationError) {
         throw new ForbiddenException();
       }
@@ -46,6 +51,7 @@ export class AuthController {
     try {
       return await this.authService.signup(signupDto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof UserCreatingError) {
         throw new ConflictException();
       }
@@ -59,6 +65,7 @@ export class AuthController {
     try {
       return await this.authService.refresh(refreshToken);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof BadTokenError) {
         throw new ForbiddenException();
       }

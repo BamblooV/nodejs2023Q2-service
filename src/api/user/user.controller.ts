@@ -22,11 +22,15 @@ import {
   UserNotFoundError,
 } from '../../common/errors';
 import { UserEntity } from './entities/user.entity';
+import { LoggingService } from '../../common/logger/LoggingService ';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly logger: LoggingService,
+  ) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
@@ -45,6 +49,7 @@ export class UserController {
     try {
       return await this.userService.findOne(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -61,6 +66,7 @@ export class UserController {
     try {
       return await this.userService.update(id, updateUserDto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }
@@ -78,6 +84,7 @@ export class UserController {
     try {
       await this.userService.remove(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof UserNotFoundError) {
         throw new NotFoundException(error.message);
       }

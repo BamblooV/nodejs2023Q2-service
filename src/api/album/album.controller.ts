@@ -15,10 +15,14 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { StatusCodes } from 'http-status-codes';
 import { AlbumNotFoundError } from '../../common/errors';
+import { LoggingService } from '../../common/logger/LoggingService ';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly logger: LoggingService,
+  ) {}
 
   @Post()
   async create(@Body() createAlbumDto: CreateAlbumDto) {
@@ -35,6 +39,7 @@ export class AlbumController {
     try {
       return await this.albumService.findOne(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof AlbumNotFoundError) {
         throw new NotFoundException(error.message);
       }

@@ -17,9 +17,9 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     }
   }
 
-  error(message: any) {
+  error(message: any, stackOrContext?: string) {
     if (this.logLevel >= 0) {
-      super.error(message);
+      super.error(message, stackOrContext);
     }
   }
 
