@@ -4,12 +4,17 @@ import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private logger: LoggingService) {}
+  constructor(private readonly logger: LoggingService) {
+    logger.setContext('LoggerMiddleware');
+  }
   use(req: Request, res: Response, next: NextFunction) {
     const { baseUrl, body, params } = req;
-    this.logger.log(`URL: ${baseUrl}`);
-    this.logger.log(`PARAMS: ${JSON.stringify(params)}`);
-    this.logger.log(`BODY: ${JSON.stringify(body)}`);
+    this.logger.log(
+      `URL: ${baseUrl} \t PARAMS: ${JSON.stringify(
+        params,
+      )} \t BODY: ${JSON.stringify(body)}`,
+    );
+
     next();
   }
 }
