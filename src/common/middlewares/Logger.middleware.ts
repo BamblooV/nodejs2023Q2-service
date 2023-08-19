@@ -9,11 +9,14 @@ export class LoggerMiddleware implements NestMiddleware {
   }
   use(req: Request, res: Response, next: NextFunction) {
     const { baseUrl, body, params } = req;
+    const { statusCode } = res;
+
     this.logger.log(
-      `URL: ${baseUrl} \t PARAMS: ${JSON.stringify(
+      `Request: URL: ${baseUrl} \t PARAMS: ${JSON.stringify(
         params,
       )} \t BODY: ${JSON.stringify(body)}`,
     );
+    this.logger.log(`Response: statusCode ${statusCode}`);
 
     next();
   }
