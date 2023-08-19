@@ -4,9 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private readonly logger: LoggingService) {
-    logger.setContext('LoggerMiddleware');
-  }
+  constructor(private readonly logger: LoggingService) {}
   use(req: Request, res: Response, next: NextFunction) {
     const { baseUrl, body, params } = req;
     const { statusCode } = res;
