@@ -4,12 +4,19 @@ import {
   LoggerService,
   Scope,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+const DEFAULT_LOGGING_LEVEL = 5;
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggingService extends ConsoleLogger implements LoggerService {
-  private logLevel = 0;
-  constructor() {
+  private logLevel: number;
+  constructor(private readonly configService: ConfigService) {
     super();
+    this.logLevel =
+      configService.get('LOGGING_LEVEL') !== undefined
+        ? parseInt(configService.get('LOGGING_LEVEL'))
+        : DEFAULT_LOGGING_LEVEL;
   }
   log(message: any) {
     if (this.logLevel >= 2) {
@@ -39,9 +46,5 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     if (this.logLevel >= 4) {
       super.verbose(message);
     }
-  }
-
-  setLogLevel(level: number): void {
-    this.logLevel = level;
   }
 }
