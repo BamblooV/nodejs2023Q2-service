@@ -1,4 +1,9 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { LogInUserDto } from './dto/login-user.dto';
 import {
@@ -48,6 +53,10 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     let login: string, userId: string;
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(
