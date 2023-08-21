@@ -1,5 +1,7 @@
 # Home Library Service
 
+![](./assets/im-fine.svg)
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -22,7 +24,7 @@ npm install
 1. Create `.env` file in root folder. You can just rename `.env.example`
 2. Specify `PORT`. (4000 as default)
 Change  port in `doc/api.yaml` on 8 line if you want use swagger to interact with api.
-3. Specify `POSTGRES_HOST`. If yoy want run app localy it should be `localhost`. If you want run app in docker container it should be `postgres`.
+3. Specify `POSTGRES_HOST`. If yoy want run app locally it should be `localhost`. If you want run app in docker container it should be `postgres`.
 
 ## Running application
 App require running database. You should run db if you want run app locally.
@@ -51,9 +53,13 @@ npm rin migration:revert
 ```
 
 ## Vulnerability
-You can scan images for vulnerability by
+You can scan images vulnerability by
 ```
 npm run docker:scan
+```
+You also can scan images vulnerability after containers:
+```
+npm run docker:run
 ```
 
 It works only for windows users with latest docker desktop.
@@ -63,5 +69,7 @@ It works only for windows users with latest docker desktop.
 After application running open new terminal and enter:
 
 ```
-npm run test
+npm run test:auth
 ```
+
+
