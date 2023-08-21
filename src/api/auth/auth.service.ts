@@ -46,7 +46,7 @@ export class AuthService {
   async signup(createUserDto: CreateUserDto) {
     try {
       const user = await this.userService.create(createUserDto);
-      return { id: user.id };
+      return user;
     } catch (error) {
       throw new UserCreatingError();
     }
