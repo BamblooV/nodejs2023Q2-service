@@ -1,0 +1,13 @@
+/dist
+/db-data
+/node_modules
+/database
+/doc
+/logs
+.env
+.env.example
+db.drawio
+Makefile
+README.md
+/.git
+.gitignore

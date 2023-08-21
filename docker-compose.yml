@@ -1,0 +1,79 @@
+version: "3.7"
+services:
+    swagger-ui:
+        image: swaggerapi/swagger-ui
+        container_name: "swagger-ui"
+        restart: unless-stopped
+        ports:
+            - ${SWAGGER_PORT}:${SWAGGER_PORT}
+        volumes:
+            - ./doc:/usr/share/nginx/html/doc
+        environment:
+            API_URL: doc/api.yaml
+        networks:
+            - user-defined
+
+    app:
+        build: .
+        container_name: "app"
+        restart: unless-stopped
+        x-develop:
+            watch:
+                - action: sync
+                  path: /src
+                  target: /user/app/src
+                  ignore:
+                    - node_modules/
+                - action: rebuild
+                  path: package.json
+        depends_on:
+            postgres:
+                condition: service_healthy
+        volumes:
+            - ./logs:/user/app/logs
+        ports:
+            - ${PORT}:${PORT}
+        networks:
+            - user-defined
+        environment:
+            PORT: ${PORT}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_HOST: ${POSTGRES_HOST}
+            JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+            JWT_SECRET_REFRESH_KEY: ${JWT_SECRET_REFRESH_KEY}
+            TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+            TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+            LOGGING_LEVEL: ${LOGGING_LEVEL}
+            LOG_FILE_SIZE: ${LOG_FILE_SIZE}
+
+    postgres:
+        build: ./database/
+        container_name: "postgres"
+        restart: unless-stopped
+        ports:
+            - ${POSTGRES_PORT}:${POSTGRES_PORT}
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            - ./db-data:/var/lib/postgresql/data
+        networks:
+            - user-defined
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U postgres']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        command: ["postgres", "-c", "log_statement=all", "-c", "logging_collector=on"]
+
+volumes:
+    db-data:
+        driver: local
+
+networks:
+    user-defined:
+        driver: bridge
+        name: 'user-defined'
