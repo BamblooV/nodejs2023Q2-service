@@ -57,7 +57,7 @@ You can scan images vulnerability by
 ```
 npm run docker:scan
 ```
-You also can scan images vulnerability after containers:
+You also can scan images vulnerability after containers runs:
 ```
 npm run docker:run
 ```
