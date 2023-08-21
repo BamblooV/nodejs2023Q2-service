@@ -3,6 +3,7 @@
 /node_modules
 /database
 /doc
+/logs
 .env
 .env.example
 db.drawio
