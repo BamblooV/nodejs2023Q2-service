@@ -13,7 +13,7 @@ async function bootstrap() {
     cors: true,
     bufferLogs: true,
   });
-  const configService: ConfigService = app.get(ConfigService);
+  const configService = app.get(ConfigService);
   const httpAdapter = app.get(HttpAdapterHost);
 
   const logger = await app.resolve(LoggingService);
