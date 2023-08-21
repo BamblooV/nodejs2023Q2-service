@@ -7,13 +7,14 @@ import { cwd } from 'node:process';
 
 const DEFAULT_LOGGING_LEVEL = 5;
 const KiB = 1024;
+const DEFAULT_FILE_SIZE = 50;
 
 @Injectable()
 export class LoggingService extends ConsoleLogger implements LoggerService {
   private logLevel: number;
   private logFileSize: number;
   private loggingDirectory: string;
-  private currentLoggingFile: string;
+  private currentLogFile: string;
   private currentErrorFile: string;
 
   private shouldCreateNewFileLog = false;
@@ -21,24 +22,24 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
 
   constructor(private readonly configService: ConfigService) {
     super();
+    // Weird check because someone can pass 0 logging level
     this.logLevel =
       configService.get('LOGGING_LEVEL') !== undefined
         ? parseInt(configService.get('LOGGING_LEVEL'))
         : DEFAULT_LOGGING_LEVEL;
 
-    this.logFileSize = parseInt(configService.get('LOG_FILE_SIZE')) || 10;
+    this.logFileSize =
+      parseInt(configService.get('LOG_FILE_SIZE')) || DEFAULT_FILE_SIZE;
     this.loggingDirectory = this.normalizePath('logs');
 
-    this.currentLoggingFile = this.saltFileName('logs.log');
+    this.currentLogFile = this.saltFileName('logs.log');
     this.currentErrorFile = this.saltFileName('errors.log');
 
     mkdirSync(this.loggingDirectory, { recursive: true });
-    writeFileSync(
-      path.join(this.loggingDirectory, this.currentLoggingFile),
-      '',
-    );
+    writeFileSync(path.join(this.loggingDirectory, this.currentLogFile), '');
     writeFileSync(path.join(this.loggingDirectory, this.currentErrorFile), '');
   }
+
   log(message: any) {
     if (this.logLevel >= 2) {
       super.log(message);
@@ -47,7 +48,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     }
   }
 
-  error(message: any, stackOrContext?: string) {
+  error(message: any, stackOrContext: string = '') {
     if (this.logLevel >= 0) {
       super.error(message, stackOrContext);
       const formattedMsg =
@@ -123,11 +124,11 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
   }
 
   private async logToFile(message: string) {
-    let targetPath = path.join(this.loggingDirectory, this.currentLoggingFile);
+    let targetPath = path.join(this.loggingDirectory, this.currentLogFile);
     await this.checkFileLog(targetPath);
     if (this.shouldCreateNewFileLog) {
-      this.currentLoggingFile = this.saltFileName('logs.log');
-      targetPath = path.join(this.loggingDirectory, this.currentLoggingFile);
+      this.currentLogFile = this.saltFileName('logs.log');
+      targetPath = path.join(this.loggingDirectory, this.currentLogFile);
       this.shouldCreateNewFileLog = false;
     }
     try {
