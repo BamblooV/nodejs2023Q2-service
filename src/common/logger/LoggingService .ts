@@ -103,7 +103,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     } catch (error) {
       this.shouldCreateNewFileLog = true;
     }
-    if (fileSizeByte > Math.floor(this.logFileSize * KiB * 0.95)) {
+    if (fileSizeByte > this.logFileSize * KiB) {
       this.shouldCreateNewFileLog = true;
     }
   }
@@ -118,7 +118,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     } catch (error) {
       this.shouldCreateNewFileErrors = true;
     }
-    if (fileSizeByte > Math.floor(this.logFileSize * KiB * 0.95)) {
+    if (fileSizeByte > this.logFileSize * KiB) {
       this.shouldCreateNewFileErrors = true;
     }
   }
