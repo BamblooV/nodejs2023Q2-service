@@ -3,8 +3,9 @@ services:
     swagger-ui:
         image: swaggerapi/swagger-ui
         container_name: "swagger-ui"
+        restart: unless-stopped
         ports:
-            - "80:8080"
+            - ${SWAGGER_PORT}:${SWAGGER_PORT}
         volumes:
             - ./doc:/usr/share/nginx/html/doc
         environment:
@@ -28,7 +29,8 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
-
+        volumes:
+            - ./logs:/user/app/logs
         ports:
             - ${PORT}:${PORT}
         networks:
@@ -43,6 +45,8 @@ services:
             JWT_SECRET_REFRESH_KEY: ${JWT_SECRET_REFRESH_KEY}
             TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
             TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+            LOGGING_LEVEL: ${LOGGING_LEVEL}
+            LOG_FILE_SIZE: ${LOG_FILE_SIZE}
 
     postgres:
         build: ./database/
