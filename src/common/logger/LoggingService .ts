@@ -52,7 +52,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
       super.error(message, stackOrContext);
       const formattedMsg =
         new Date().toISOString() + ' ERROR ' + message + '\n';
-      this.errorToFile(formattedMsg);
+      this.errorToFile(formattedMsg, stackOrContext);
     }
   }
 
@@ -138,7 +138,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     process.nextTick(() => (this.shouldCreateNewFileLog = false));
   }
 
-  private async errorToFile(message: string) {
+  private async errorToFile(message: string, stack: string) {
     let targetPath = path.join(this.loggingDirectory, this.currentErrorFile);
     await this.checkFileError(targetPath);
     if (this.shouldCreateNewFileErrors) {
@@ -147,6 +147,7 @@ export class LoggingService extends ConsoleLogger implements LoggerService {
     }
     try {
       await this.appendToFile(targetPath, message);
+      await this.appendToFile(targetPath, stack);
     } catch (error) {
       console.error('Error on storing logs: ', error);
     }
